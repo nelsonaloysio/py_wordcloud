@@ -57,7 +57,8 @@ def wordcloud(input_name, output_name=None,
                     word = word.replace(punct,'')
                 if len(word)>1:
                     w = word.lower()
-                    if w not in CUSTOM_STOPWORDS:
+                    if w not in exclude_words\
+                    and w not in CUSTOM_STOPWORDS:
                         dict_int_words[w] += 1   # count word occurrences
                         dict_str_words[w] = word # preserve case letters
 
@@ -139,7 +140,7 @@ if __name__ == "__main__":
     parser.add_argument('input', action='store', help='input file name')
     parser.add_argument('-o', '--output', action='store', default='wordcloud.html', help='output file name')
     parser.add_argument('-w', '--max-words', action='store', type=int, help='maximum number of words (default: 100)', default=100)
-    parser.add_argument('-x', '--exclude-words', action='store', help='list of words to ignore (comma separated)')
+    parser.add_argument('-x', '--exclude-words', action='store', help='list of words to ignore (comma separated)', default=[])
 
     args = parser.parse_args()
 
