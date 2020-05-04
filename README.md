@@ -4,7 +4,9 @@ py_wordcloud
 Outputs HTML word cloud d3.js code from text file.
 
 ```
-usage: wordcloud.py [-h] [-o OUTPUT] [-w MAX_WORDS] [-x EXCLUDE_WORDS] input
+usage: wordcloud [-h] [-o OUTPUT] [-w MAX_WORDS]
+                 [-x EXCLUDE_WORDS] [-e ENCODING]
+                 input
 
 positional arguments:
   input                 input file name
@@ -17,6 +19,8 @@ optional arguments:
                         maximum number of words (default: 100)
   -x EXCLUDE_WORDS, --exclude-words EXCLUDE_WORDS
                         list of words to ignore (comma separated)
+  -e ENCODING, --encoding ENCODING
+                        file encoding (default: utf-8)
 ```
 
 Included is a list of stopwords to ignore on read:

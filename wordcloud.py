@@ -4,7 +4,9 @@
 """
 Outputs HTML word cloud d3.js code from text file.
 
-usage: wordcloud.py [-h] [-o OUTPUT] [-w MAX_WORDS] [-x EXCLUDE_WORDS] input
+usage: wordcloud [-h] [-o OUTPUT] [-w MAX_WORDS]
+                 [-x EXCLUDE_WORDS] [-e ENCODING]
+                 input
 
 positional arguments:
   input                 input file name
@@ -17,6 +19,8 @@ optional arguments:
                         maximum number of words (default: 100)
   -x EXCLUDE_WORDS, --exclude-words EXCLUDE_WORDS
                         list of words to ignore (comma separated)
+  -e ENCODING, --encoding ENCODING
+                        file encoding (default: utf-8)
 
 Based on the Python code from twarc:
 * https://github.com/DocNow/twarc/
@@ -35,10 +39,12 @@ from urllib.request import urlopen
 
 from stopwords import CUSTOM_STOPWORDS
 
+ENCODING = 'utf-8'
+
 URL = 'https://raw.githubusercontent.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js'
 
 def wordcloud(input_name, output_name=None,
-    max_words=100, exclude_words=[]):
+    max_words=100, exclude_words=[], encoding=ENCODING):
     '''
     Generate cloud from word count dictionary.
     '''
@@ -50,9 +56,9 @@ def wordcloud(input_name, output_name=None,
     if isinstance(exclude_words, str):
         exclude_words = exclude_words.replace(', ',',').split(',')
 
-    with open(input_name, 'rt', errors='ignore') as f:
-        for line in f.readlines():
-            for word in line.split():
+    with open(input_name, 'rt', encoding=encoding, errors='ignore') as f:
+        for line in f:
+            for word in line.rstrip().split():
                 for punct in punctuation:
                     word = word.replace(punct,'')
                 if len(word)>1:
@@ -63,7 +69,7 @@ def wordcloud(input_name, output_name=None,
                         dict_str_words[w] = word # preserve case letters
 
     sorted_words = list(dict_int_words.keys())
-    sorted_words.sort(key = lambda x: dict_int_words[x], reverse=True)
+    sorted_words.sort(key=lambda x: dict_int_words[x], reverse=True)
 
     top_words   = sorted_words[:max_words]
     count_range = dict_int_words[top_words[0]] - dict_int_words[top_words[-1]] + 1
@@ -141,10 +147,12 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', action='store', default='wordcloud.html', help='output file name')
     parser.add_argument('-w', '--max-words', action='store', type=int, help='maximum number of words (default: 100)', default=100)
     parser.add_argument('-x', '--exclude-words', action='store', help='list of words to ignore (comma separated)', default=[])
+    parser.add_argument('-e', '--encoding', action='store', help='file encoding (default: %s)' % ENCODING)
 
     args = parser.parse_args()
 
     wordcloud(args.input,
               args.output,
               args.max_words,
-              args.exclude_words)
+              args.exclude_words,
+              args.encoding)
